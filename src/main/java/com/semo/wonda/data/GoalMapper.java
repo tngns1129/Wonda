@@ -14,7 +14,10 @@ import java.util.List;
 public interface GoalMapper {
     GoalMapper INSTANCE = Mappers.getMapper(GoalMapper.class);
 
-    @Mapping(source = "goalName", target = "goalName")
+    @Mapping(source = "goalTitle", target = "goalTitle")
+    @Mapping(source = "goalAmount", target = "goalAmount")
+    @Mapping(source = "startDate", target = "startDate")
+    @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "goalType", target = "goalType")
     GoalResponseDTO toDTO(GoalEntity entity);
 

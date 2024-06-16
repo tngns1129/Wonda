@@ -45,16 +45,14 @@ public class GoalController {
     @RequestMapping(method = GET)
     @ResponseBody
     public ResponseEntity<?> getGoal(
-            Pageable pageable,
-            HttpServletRequest response
+            Pageable pageable
     ){
 
         try{
-            logger.info(response.getSession() + "");
             Map<String, Object> result = new HashMap<>();
             result.put("code", 0);
             result.put("message", "success search");
-            result.put("data", goalService.getGoal(pageable));
+            result.put("data", goalService.getGoalByUsername(pageable, SecurityUtils.getCurrentUsername()));
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             // 예외 처리 로직 추가
@@ -103,14 +101,18 @@ public class GoalController {
         }
     }
 
+    //page default : page 0, size 20
+    //ex)http://localhost:8080/goal?page=0&size=20&sort=createDate,DESC
     @RequestMapping(value = "/all", method = GET)
     @ResponseBody
-    public ResponseEntity<?> getAll(){
+    public ResponseEntity<?> getAll(
+            Pageable pageable
+    ){
         try{
             Map<String, Object> result = new HashMap<>();
             result.put("code", 0);
             result.put("message", "success search");
-            result.put("data", goalService.getAllGoal());
+            result.put("data", goalService.getGoal(pageable));
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             // 예외 처리 로직 추가

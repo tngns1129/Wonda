@@ -11,10 +11,7 @@ import com.semo.wonda.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,8 +34,18 @@ public class GoalService {
     }
 
     public Page<GoalResponseDTO> getGoal(Pageable pageable){
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdate");
         Page<GoalEntity> entityPage = goalRepository.findAll(pageable);
+        return GoalMapper.INSTANCE.toDTOPage(entityPage);
+    }
+
+    public Page<GoalResponseDTO> getGoalByUsername(Pageable pageable, String userName){
+        UserEntity user = userRepository.findByUserName(userName);
+        Page<GoalEntity> entityPage = null;
+        if(user != null){
+            entityPage = goalRepository.findAllByUserEntity(pageable, user);
+        }else {
+        }
+
         return GoalMapper.INSTANCE.toDTOPage(entityPage);
     }
 

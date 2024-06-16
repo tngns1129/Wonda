@@ -11,14 +11,18 @@ import lombok.Setter;
 @Setter
 public class GoalRequestDTO {
 
-    private String goalName;
-    private String content;
+    private String goalTitle;
+    private String goalAmount;
+    private String startDate;
+    private String endDate;
     private GoalType goalType;
 
     @Builder
-    public GoalRequestDTO(String goalName, String content, GoalType goalType){
-        this.goalName = goalName;
-        this.content = content;
+    public GoalRequestDTO(String goalTitle, String goalAmount, String startDate, String endDate, GoalType goalType){
+        this.goalTitle = goalTitle;
+        this.goalAmount = goalAmount;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.goalType = goalType;
     }
 }
