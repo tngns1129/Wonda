@@ -54,7 +54,7 @@ public class GoalService {
         try{
             GoalEntity entity = GoalMapper.INSTANCE.toEntity(requestDTO);
             if(userName.equals("anonymousUser")){
-
+                //todo: 비로그인 사용자
             }
             UserEntity user = userRepository.findByUserName(userName);
             if(user == null){

@@ -70,7 +70,6 @@ public class GoalController {
             @RequestBody GoalRequestDTO requestDTO){
         try {
             String userName = SecurityUtils.getCurrentUsername();
-            goalService.postGoal(userName, requestDTO);
             Map<String, Object> result = goalService.postGoal(userName, requestDTO);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
