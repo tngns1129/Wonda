@@ -5,6 +5,7 @@ import com.semo.wonda.data.GoalMapper;
 import com.semo.wonda.data.request.GoalRequestDTO;
 import com.semo.wonda.data.response.GoalResponseDTO;
 import com.semo.wonda.entity.GoalEntity;
+import com.semo.wonda.entity.GoalType;
 import com.semo.wonda.entity.UserEntity;
 import com.semo.wonda.repository.GoalRepository;
 import com.semo.wonda.repository.UserRepository;
@@ -38,14 +39,20 @@ public class GoalService {
         return GoalMapper.INSTANCE.toDTOPage(entityPage);
     }
 
-    public Page<GoalResponseDTO> getGoalByUsername(Pageable pageable, String userName){
+    public Page<GoalResponseDTO> getGoalByUsernameAndGoalType(Pageable pageable, String userName, GoalType goalType){
         UserEntity user = userRepository.findByUserName(userName);
-        Page<GoalEntity> entityPage = null;
+        Page<GoalEntity> entityPage = Page.empty();
         if(user != null){
             if (!pageable.getSort().isSorted()) {
                 pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("updateDate").descending());
             }
-            entityPage = goalRepository.findAllByUserEntity(pageable, user);
+
+            if(goalType == null){
+                entityPage = goalRepository.findAllByUserEntity(pageable, user);
+            }else{
+                entityPage = goalRepository.findAllByUserEntityAndGoalType(pageable, user, goalType);
+            }
+
         }else {
         }
 

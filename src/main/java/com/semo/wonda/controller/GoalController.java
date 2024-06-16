@@ -2,12 +2,9 @@ package com.semo.wonda.controller;
 
 import com.semo.wonda.SecurityUtils;
 import com.semo.wonda.data.request.GoalRequestDTO;
+import com.semo.wonda.entity.GoalType;
 import com.semo.wonda.service.GoalService;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -36,7 +33,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequiredArgsConstructor
 public class GoalController {
 
-    private static final Logger logger = LoggerFactory.getLogger(GoalController.class);
+    private static final Logger log = LoggerFactory.getLogger(GoalController.class);
     @Autowired
     private final GoalService goalService;
 
@@ -45,21 +42,21 @@ public class GoalController {
     @RequestMapping(method = GET)
     @ResponseBody
     public ResponseEntity<?> getGoal(
-            Pageable pageable
+            Pageable pageable,
+            @RequestParam(required = false) GoalType goalType
     ){
-
         try{
             Map<String, Object> result = new HashMap<>();
             result.put("code", 0);
             result.put("message", "success search");
-            result.put("data", goalService.getGoalByUsername(pageable, SecurityUtils.getCurrentUsername()));
+            result.put("data", goalService.getGoalByUsernameAndGoalType(pageable, SecurityUtils.getCurrentUsername(), goalType));
             return ResponseEntity.ok(result);
-        } catch (Exception e) {
+        }catch (Exception e) {
             // 예외 처리 로직 추가
             Map<String, Object> errorResult = new HashMap<>();
             errorResult.put("code",-1);
             errorResult.put("message","error occurred: " + e.getMessage());
-            logger.error("Controller error: {}", e.getMessage(), e);
+            log.error("Controller error: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
         }
     }
@@ -77,7 +74,7 @@ public class GoalController {
             Map<String, Object> errorResult = new HashMap<>();
             errorResult.put("code",-1);
             errorResult.put("message","error occurred: " + e.getMessage());
-            logger.error("Controller error: {}", e.getMessage(), e);
+            log.error("Controller error: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
         }
     }
@@ -95,7 +92,7 @@ public class GoalController {
             Map<String, Object> errorResult = new HashMap<>();
             errorResult.put("code",-1);
             errorResult.put("message","error occurred: " + e.getMessage());
-            logger.error("Controller error: {}", e.getMessage(), e);
+            log.error("Controller error: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
         }
     }
@@ -118,7 +115,7 @@ public class GoalController {
             Map<String, Object> errorResult = new HashMap<>();
             errorResult.put("code",-1);
             errorResult.put("message","error occurred: " + e.getMessage());
-            logger.error("Controller error: {}", e.getMessage(), e);
+            log.error("Controller error: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
         }
     }

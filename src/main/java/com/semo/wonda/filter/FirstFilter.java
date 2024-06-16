@@ -51,20 +51,22 @@ public class FirstFilter implements Filter {
         // response 내용 상태 정보, 내용 확인
         int httpStatus = httpServletResponse.getStatus();
         String resContent = new String(httpServletResponse.getContentAsByteArray());
-
-        if (httpStatus != HttpServletResponse.SC_OK) {
-            log.error("status: {}", httpStatus);
-            log.error("error: {}", HttpStatus.valueOf(httpStatus).getReasonPhrase());
-            log.error("path: {}", httpServletRequest.getRequestURI());
-            //log.error("response: {}", resContent);
-            log.error(req);
-        }else{
-            //주의 : response를 클라이언트에서 볼 수 있도록 하려면 response를 복사해야 한다. response를 콘솔에 보여주면 내용이 사라진다.
-            httpServletResponse.copyBodyToResponse();
-
-            log.info("status: {}", httpStatus);
-            //log.info("response: {}", resContent);
-        }
+        log.info("status: {}", httpStatus);
+        log.info("response: {}", resContent);
+        httpServletResponse.copyBodyToResponse();
+//        if (httpStatus != HttpServletResponse.SC_OK) {
+//            log.error("status: {}", httpStatus);
+//            log.error("error: {}", HttpStatus.valueOf(httpStatus).getReasonPhrase());
+//            log.error("path: {}", httpServletRequest.getRequestURI());
+//            //log.error("response: {}", resContent);
+//            log.error(req);
+//        }else{
+//            //주의 : response를 클라이언트에서 볼 수 있도록 하려면 response를 복사해야 한다. response를 콘솔에 보여주면 내용이 사라진다.
+//            httpServletResponse.copyBodyToResponse();
+//
+//            log.info("status: {}", httpStatus);
+//            //log.info("response: {}", resContent);
+//        }
 
 
     }
