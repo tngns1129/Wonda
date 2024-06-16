@@ -1,7 +1,11 @@
 package com.semo.wonda.controller;
 
+import com.semo.wonda.SecurityUtils;
 import com.semo.wonda.data.request.GoalRequestDTO;
 import com.semo.wonda.service.GoalService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.query.Page;
 import org.slf4j.Logger;
@@ -41,9 +45,12 @@ public class GoalController {
     @RequestMapping(method = GET)
     @ResponseBody
     public ResponseEntity<?> getGoal(
-            Pageable pageable
+            Pageable pageable,
+            HttpServletRequest response
     ){
+
         try{
+            logger.info(response.getSession() + "");
             Map<String, Object> result = new HashMap<>();
             result.put("code", 0);
             result.put("message", "success search");
@@ -62,9 +69,9 @@ public class GoalController {
     @RequestMapping(method = POST)
     @ResponseBody
     public ResponseEntity<?> postGoal(
-            @RequestParam(value = "userName", required = true)String userName,
             @RequestBody GoalRequestDTO requestDTO){
         try {
+            String userName = SecurityUtils.getCurrentUsername();
             goalService.postGoal(userName, requestDTO);
             Map<String, Object> result = goalService.postGoal(userName, requestDTO);
             return ResponseEntity.ok(result);

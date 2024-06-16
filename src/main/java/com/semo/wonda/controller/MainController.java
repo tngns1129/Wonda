@@ -9,16 +9,9 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 public class MainController {
 
     @GetMapping("/")
-    public String home(@SessionAttribute(name = "userId", required = false) Long userId, Model model) {
+    public String home() {
 
-        if(userId == null) {
-            System.out.println("로그인 하지 않음");
-            model.addAttribute("userId", "not login");
-        }
-        else {
-            System.out.println("로그인 유저의 Id : " + userId);
-            model.addAttribute("userId", userId);
-        }
+
         return "index.html";
     }
 

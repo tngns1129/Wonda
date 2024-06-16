@@ -1,12 +1,19 @@
 package com.semo.wonda.controller;
 
+import com.semo.wonda.SecurityUtils;
 import com.semo.wonda.data.request.UserRequestDTO;
+import com.semo.wonda.data.response.UserResponseDTO;
 import com.semo.wonda.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +26,7 @@ import java.util.Map;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+@Slf4j
 @Controller
 @RequestMapping(value = "/sign")
 public class SignController {
@@ -26,21 +34,37 @@ public class SignController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @RequestMapping(value = "/out", method = POST)
+    @ResponseBody
+    public ResponseEntity<?> signout(
+            HttpServletRequest request){
+        Map<String, Object> result = new HashMap<>();
+        HttpSession session = request.getSession(false);  // Session이 없으면 null return
+        if(session != null) {
+            session.invalidate();
+            result.put("code", 0);
+            result.put("message", "로그아웃 성공");
+        } else{
+            result.put("code", 1);
+            result.put("message", "이미 로그아웃 상태");
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
     @RequestMapping(value = "/in", method = POST)
     @ResponseBody
     public ResponseEntity<?> signin(HttpServletRequest request){
         UserRequestDTO userRequestDTO = new UserRequestDTO();
         userRequestDTO.setUserName(request.getParameter("userName"));
-        userRequestDTO.setUserPassward(request.getParameter("userPassward"));
+        userRequestDTO.setUserPassword(request.getParameter("userPassword"));
         Map<String, Object> result = userService.signIn(userRequestDTO);
         if ((int) result.get("code") == 0) {
             HttpSession session = request.getSession();
             session.setAttribute("loginMember", userRequestDTO);
-            session.setMaxInactiveInterval(60 * 30);
-            request.setAttribute("user", userRequestDTO.getUserName());
-            result.put("message", "로그인 성공");
+            session.setMaxInactiveInterval(5);
         } else {
-            result.put("message", "로그인 실패");
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -48,7 +72,10 @@ public class SignController {
     @RequestMapping(value = "/up",method = POST)
     @ResponseBody
     public ResponseEntity<?> signup(
-            @RequestBody UserRequestDTO userRequestDTO){
+            HttpServletRequest request){
+        UserRequestDTO userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setUserName(request.getParameter("userName"));
+        userRequestDTO.setUserPassword(passwordEncoder.encode(request.getParameter("userPassword")));
         Map<String, Object> result = userService.checkId(userRequestDTO.getUserName());
         if (result.get("code").equals(0)) {
             try {
@@ -65,16 +92,18 @@ public class SignController {
 
     @RequestMapping(value = "/status", method = GET)
     @ResponseBody
-    public ResponseEntity<?> status(HttpSession session) {
+    public ResponseEntity<?> status() {
         Map<String, Object> result = new HashMap<>();
-        String user = (String) session.getAttribute("user");
-        if (user != null) {
+        // Get the security context from the session
+        if (SecurityUtils.isAuthenticated()) {
+            String username = SecurityUtils.getCurrentUsername();
             result.put("message", "로그인 상태");
-            result.put("user", user);
+            result.put("username", username);
         } else {
             result.put("message", "로그아웃 상태");
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
 }

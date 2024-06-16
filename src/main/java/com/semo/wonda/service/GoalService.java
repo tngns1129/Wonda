@@ -46,6 +46,9 @@ public class GoalService {
         HashMap<String, Object> result = new HashMap<>();
         try{
             GoalEntity entity = GoalMapper.INSTANCE.toEntity(requestDTO);
+            if(userName.equals("anonymousUser")){
+
+            }
             UserEntity user = userRepository.findByUserName(userName);
             if(user == null){
                 result.put("code", 1);

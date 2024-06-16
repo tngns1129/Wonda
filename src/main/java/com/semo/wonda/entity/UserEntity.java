@@ -13,8 +13,8 @@ import lombok.Setter;
 public class UserEntity extends BasicEntity{
     @Column(name = "user_name")
     private String userName;
-    @Column(name = "user_passward")
-    private String userPassward;
+    @Column(name = "user_password")
+    private String userPassword;
     @Column(name = "user_type")
     private UserType userType;
 }

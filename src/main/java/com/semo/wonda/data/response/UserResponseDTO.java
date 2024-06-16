@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 public class UserResponseDTO {
     private String userName;
-    private String userPassward;
-    public UserResponseDTO(String userName, String userPassward){
+    private String userPassword;
+    public UserResponseDTO(String userName, String userPassword){
         this.userName = userName;
-        this.userPassward = userPassward;
+        this.userPassword = userPassword;
     }
     public UserResponseDTO(){}
 }

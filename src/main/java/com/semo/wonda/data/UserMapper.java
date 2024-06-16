@@ -17,7 +17,7 @@ import java.util.List;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
     @Mapping(source = "userName", target = "userName")
-    @Mapping(source = "userPassward", target = "userPassward")
+    @Mapping(source = "userPassword", target = "userPassword")
     UserResponseDTO toDTO(UserEntity entity);
 
     UserEntity toEntity(UserRequestDTO dto);

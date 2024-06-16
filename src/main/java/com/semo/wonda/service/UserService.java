@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
             result.put("code", 1);
             result.put("message", "존재하지 않는 아이디");
             return result;
-        }else if(!entity.getUserPassward().equals(userRequestDTO.getUserPassward())){
+        }else if(!entity.getUserPassword().equals(userRequestDTO.getUserPassword())){
             result.put("code", 2);
             result.put("message", "패스워드 불일치");
         } else{
@@ -57,13 +57,13 @@ public class UserService implements UserDetailsService {
         // 아이디가 null이거나 빈 문자열확인
         if (id == null || id.isEmpty()) {
             result.put("code", 1);
-            result.put("message", "id is empty");
+            result.put("message", "null 값");
         } else if (!id.matches(regex)) {// 공백, 특수문자 확인
             result.put("code", 2);
-            result.put("message", "ID contains invalid characters");
+            result.put("message", "ID에 공백 또는 특수문자");
         } else if (entity != null) {// 아이디 중복 확인
             result.put("code", 3);
-            result.put("message", "ID is already in use");
+            result.put("message", "중복된 ID");
         } else{
             result.put("code", 0);
         }
@@ -73,7 +73,9 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity entity = userRepository.findByUserName(username);
-
-        return User.builder().username(entity.getUserName()).password(entity.getUserPassward()).roles(entity.getUserType().name()).build();
+        if (entity == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        return User.builder().username(entity.getUserName()).password(entity.getUserPassword()).roles(entity.getUserType().name()).build();
     }
 }

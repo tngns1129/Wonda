@@ -10,9 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.PrintWriter;
 
@@ -27,6 +30,10 @@ public class SecurityConfig {
     }
 
     @Bean
+    public PasswordEncoder passwordEncoder(){
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+    @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf((csrfConfig) ->
@@ -40,7 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
                                 .requestMatchers("/", "/sign/**").permitAll()
-                                .requestMatchers("/", "/**").permitAll()
+//                                .requestMatchers("/", "/**").permitAll()
                                 .anyRequest().authenticated()
                 )//
                 .exceptionHandling((exceptionConfig) ->
@@ -48,14 +55,16 @@ public class SecurityConfig {
                 ) // 401 403 관련 예외처리
                 .formLogin((formLogin) ->
                     formLogin
-                            .loginPage("/sign")
+                            .loginPage("/sign/in")
                             .usernameParameter("userName")
-                            .passwordParameter("userPassward")
-                            .loginProcessingUrl("/sign/login-proc")
-                            .defaultSuccessUrl("/", true)
+                            .passwordParameter("userPassword")
+                            .loginProcessingUrl("/sign/in")
+                            .defaultSuccessUrl("/goal", true)
                     )
                 .logout((logoutConfig) ->
-                        logoutConfig.logoutSuccessUrl("/")
+                        logoutConfig
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/sign/out"))
+                                .logoutSuccessUrl("/")
                 )
                 .userDetailsService(userService);
 
@@ -90,5 +99,7 @@ public class SecurityConfig {
         private final HttpStatus status;
         private final String message;
     }
+
+
 }
 
