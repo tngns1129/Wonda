@@ -42,6 +42,9 @@ public class GoalService {
         UserEntity user = userRepository.findByUserName(userName);
         Page<GoalEntity> entityPage = null;
         if(user != null){
+            if (!pageable.getSort().isSorted()) {
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("updateDate").descending());
+            }
             entityPage = goalRepository.findAllByUserEntity(pageable, user);
         }else {
         }
