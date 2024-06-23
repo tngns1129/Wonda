@@ -4,8 +4,10 @@ import com.semo.wonda.entity.GoalEntity;
 import com.semo.wonda.entity.GoalType;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class GoalResponseDTO {
     private String goalTitle;
     private String goalAmount;
@@ -20,8 +22,4 @@ public class GoalResponseDTO {
         this.endDate = endDate;
         this.goalType = goalType;
     }
-
-    // 기본 생성자
-    public GoalResponseDTO() {}
-
 }

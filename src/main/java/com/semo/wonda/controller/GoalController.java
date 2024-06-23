@@ -3,6 +3,7 @@ package com.semo.wonda.controller;
 import com.semo.wonda.SecurityUtils;
 import com.semo.wonda.data.request.GoalRequestDTO;
 import com.semo.wonda.entity.GoalType;
+import com.semo.wonda.entity.UserEntity;
 import com.semo.wonda.service.GoalService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class GoalController {
     //ex)http://localhost:8080/goal?page=0&size=20&sort=createDate,DESC
     @RequestMapping(method = GET)
     @ResponseBody
-    public ResponseEntity<?> getGoal(
+    public ResponseEntity<?> getGoals(
             Pageable pageable,
             @RequestParam(required = false) GoalType goalType
     ){
@@ -97,18 +98,17 @@ public class GoalController {
         }
     }
 
-    //page default : page 0, size 20
-    //ex)http://localhost:8080/goal?page=0&size=20&sort=createDate,DESC
     @RequestMapping(value = "/all", method = GET)
     @ResponseBody
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<?> getAllGoals(
             Pageable pageable
     ){
         try{
+            String userName = SecurityUtils.getCurrentUsername();
             Map<String, Object> result = new HashMap<>();
             result.put("code", 0);
             result.put("message", "success search");
-            result.put("data", goalService.getGoal(pageable));
+            result.put("data", goalService.getAllGoalByUser(userName));
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             // 예외 처리 로직 추가

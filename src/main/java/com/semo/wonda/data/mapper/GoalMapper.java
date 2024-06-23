@@ -1,4 +1,4 @@
-package com.semo.wonda.data;
+package com.semo.wonda.data.mapper;
 
 import com.semo.wonda.data.request.GoalRequestDTO;
 import com.semo.wonda.data.response.GoalResponseDTO;

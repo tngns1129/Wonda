@@ -35,7 +35,7 @@ public class GoalEntity extends BasicEntity {
 
     //목표작성자
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
     @Builder

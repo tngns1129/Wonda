@@ -1,7 +1,6 @@
 package com.semo.wonda.service;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
-import com.semo.wonda.data.GoalMapper;
+import com.semo.wonda.data.mapper.GoalMapper;
 import com.semo.wonda.data.request.GoalRequestDTO;
 import com.semo.wonda.data.response.GoalResponseDTO;
 import com.semo.wonda.entity.GoalEntity;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,8 +27,9 @@ public class GoalService {
     @Autowired
     private final UserRepository userRepository;
 
-    public List<GoalResponseDTO> getAllGoal(){
-        List<GoalEntity> entityList = goalRepository.findAll();
+    public List<GoalResponseDTO> getAllGoalByUser(String username){
+        UserEntity user = userRepository.findByUserName(username);
+        List<GoalEntity> entityList = goalRepository.findAllByUserEntity(user);
         return GoalMapper.INSTANCE.toDTOList(entityList);
     }
 

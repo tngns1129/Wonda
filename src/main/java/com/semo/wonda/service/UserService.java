@@ -1,9 +1,7 @@
 package com.semo.wonda.service;
 
-import com.semo.wonda.data.GoalMapper;
-import com.semo.wonda.data.UserMapper;
+import com.semo.wonda.data.mapper.UserMapper;
 import com.semo.wonda.data.request.UserRequestDTO;
-import com.semo.wonda.entity.GoalEntity;
 import com.semo.wonda.entity.UserEntity;
 import com.semo.wonda.entity.UserType;
 import com.semo.wonda.repository.UserRepository;
