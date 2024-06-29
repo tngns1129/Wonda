@@ -5,6 +5,7 @@ import com.semo.wonda.data.response.GoalResponseDTO;
 import com.semo.wonda.entity.GoalEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public interface GoalMapper {
     GoalMapper INSTANCE = Mappers.getMapper(GoalMapper.class);
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "goalTitle", target = "goalTitle")
     @Mapping(source = "goalAmount", target = "goalAmount")
     @Mapping(source = "startDate", target = "startDate")
@@ -28,5 +30,8 @@ public interface GoalMapper {
     }
 
     GoalEntity toEntity(GoalRequestDTO dto);
+
+    @Mapping(target = "id", ignore = true)  // id는 업데이트 시 변경하지 않도록 무시
+    void updateEntityFromDto(GoalRequestDTO dto, @MappingTarget GoalEntity entity);
 
 }

@@ -82,11 +82,31 @@ public class GoalController {
 
     @RequestMapping(method = DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteGoal(@RequestBody GoalRequestDTO requestDTO){
+    public ResponseEntity<?> deleteGoal(
+            @RequestParam Long id
+    ){
         try {
-            Map<String, Object> result = new HashMap<>();
-            result.put("code",0);
-            result.put("message","success save");
+            String userName = SecurityUtils.getCurrentUsername();
+            Map<String, Object> result = goalService.deleteGoal(id, userName);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            // 예외 처리 로직 추가
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("code",-1);
+            errorResult.put("message","error occurred: " + e.getMessage());
+            log.error("Controller error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
+        }
+    }
+    @RequestMapping(method = PUT)
+    @ResponseBody
+    public ResponseEntity<?> updateGoal(
+            @RequestBody GoalRequestDTO requestDTO,
+            @RequestParam Long id
+    ){
+        try {
+            String userName = SecurityUtils.getCurrentUsername();
+            Map<String, Object> result = goalService.updateGoal(id, userName, requestDTO);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             // 예외 처리 로직 추가

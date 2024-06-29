@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -47,9 +48,9 @@ public class GoalService {
             }
 
             if(goalType == null){
-                entityPage = goalRepository.findAllByUserEntity(pageable, user);
+                entityPage = goalRepository.findAllByUserEntityAndDeletedFalse(pageable, user);
             }else{
-                entityPage = goalRepository.findAllByUserEntityAndGoalType(pageable, user, goalType);
+                entityPage = goalRepository.findAllByUserEntityAndGoalTypeAndDeletedFalse(pageable, user, goalType);
             }
 
         }else {
@@ -78,6 +79,66 @@ public class GoalService {
 
         }catch (Exception e){
             e.printStackTrace();
+            result.put("code", 2);
+            result.put("message", "An error occurred while updating the goal");
+        }
+        return result;
+    }
+
+    public HashMap<String, Object> deleteGoal(Long id, String userName){
+        HashMap<String, Object> result = new HashMap<>();
+        try{
+            Optional<GoalEntity> optionalEntity = goalRepository.findById(id);
+            if (optionalEntity.isPresent()) {
+                GoalEntity goalEntity = optionalEntity.get();
+                // Use goalEntity
+                if(goalEntity.getUserEntity().equals(userRepository.findByUserName(userName))){
+                    goalEntity.setDeleted(true);
+                    result.put("code", 0);
+                    result.put("message", "Delete Success");
+                }else{
+                    result.put("code", 2);
+                    result.put("message", "You are not the author of this goal and cannot delete it");
+                }
+            } else {
+                // Handle the case where the entity is not found
+                result.put("code", 1);
+                result.put("message", "There is not goal");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            result.put("code", 3);
+            result.put("message", "An error occurred while updating the goal");
+        }
+        return result;
+    }
+
+    public HashMap<String, Object> updateGoal(Long id, String userName, GoalRequestDTO goalRequestDTO){
+        HashMap<String, Object> result = new HashMap<>();
+        try{
+            Optional<GoalEntity> optionalEntity = goalRepository.findById(id);
+            if (optionalEntity.isPresent()) {
+                GoalEntity goalEntity = optionalEntity.get();
+                // Use goalEntity
+                if(goalEntity.getUserEntity().equals(userRepository.findByUserName(userName))){
+                    GoalMapper.INSTANCE.updateEntityFromDto(goalRequestDTO, goalEntity);
+//                    goalEntity.setUpdateDate(new Date());
+                    goalRepository.save(goalEntity);
+                    result.put("code", 0);
+                    result.put("message", "Update Success");
+                }else{
+                    result.put("code", 2);
+                    result.put("message", "You are not the author of this goal and cannot update it");
+                }
+            } else {
+                // Handle the case where the entity is not found
+                result.put("code", 1);
+                result.put("message", "There is not goal");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            result.put("code", 3);
+            result.put("message", "An error occurred while updating the goal");
         }
         return result;
     }

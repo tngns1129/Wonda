@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 
 @MappedSuperclass
 @Getter
+@Setter
 public class BasicEntity implements Serializable {
 
     @Id
@@ -20,9 +21,22 @@ public class BasicEntity implements Serializable {
     private Date createDate;
     @Column(name = "update_date")
     private Date updateDate;
+    @Column(name = "delete_date")
+    private Date deleteDate;
+    @Column(name = "deleted")
+    private Boolean deleted = false;
     @PrePersist
     protected void onCreate() {
         updateDate = new Date();
         createDate = new Date();
+    }
+    @PreUpdate
+    protected void onUpdate() {
+
+        if(deleted){
+            deleteDate = new Date();
+        }else{
+            updateDate = new Date();
+        }
     }
 }

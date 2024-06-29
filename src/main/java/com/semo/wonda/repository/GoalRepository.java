@@ -11,9 +11,11 @@ import java.util.List;
 
 public interface GoalRepository extends JpaRepository<GoalEntity, Long> {
 
-    Page<GoalEntity> findAllByUserEntity(Pageable pageable, UserEntity user);
+    Page<GoalEntity> findAllByUserEntityAndDeletedFalse(Pageable pageable, UserEntity user);
 
     Page<GoalEntity> findAllByUserEntityAndGoalType(Pageable pageable, UserEntity user, GoalType goalType);
 
     List<GoalEntity> findAllByUserEntity(UserEntity user);
+
+    Page<GoalEntity> findAllByUserEntityAndGoalTypeAndDeletedFalse(Pageable pageable, UserEntity user, GoalType goalType);
 }
