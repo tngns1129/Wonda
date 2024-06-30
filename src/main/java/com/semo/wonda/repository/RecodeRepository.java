@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RecodeRepository extends JpaRepository<RecodeEntity, Long> {
-    Page<RecodeEntity> findAllByGoalEntity(Pageable pageable, GoalEntity goalEntity);
+    Page<RecodeEntity> findAllByGoalEntityAndDeletedFalse(Pageable pageable, GoalEntity goalEntity);
 }

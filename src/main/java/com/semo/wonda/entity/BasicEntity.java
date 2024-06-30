@@ -32,7 +32,6 @@ public class BasicEntity implements Serializable {
     }
     @PreUpdate
     protected void onUpdate() {
-
         if(deleted){
             deleteDate = new Date();
         }else{

@@ -6,12 +6,15 @@ import com.semo.wonda.data.response.GoalResponseDTO;
 import com.semo.wonda.data.response.RecodeResponseDTO;
 import com.semo.wonda.entity.GoalEntity;
 import com.semo.wonda.entity.RecodeEntity;
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
+@Mapper
 public interface RecodeMapper {
     RecodeMapper INSTANCE = Mappers.getMapper(RecodeMapper.class);
 
@@ -28,4 +31,7 @@ public interface RecodeMapper {
     }
 
     RecodeEntity toEntity(RecodeRequestDTO dto);
+
+    @Mapping(target = "id", ignore = true)  // id는 업데이트 시 변경하지 않도록 무시
+    void updateEntityFromDto(RecodeRequestDTO dto, @MappingTarget RecodeEntity entity);
 }

@@ -85,17 +85,17 @@ public class GoalService {
         return result;
     }
 
-    public HashMap<String, Object> deleteGoal(Long id, String userName){
+    public HashMap<String, Object> deleteGoal(Long goalId, String userName){
         HashMap<String, Object> result = new HashMap<>();
         try{
-            Optional<GoalEntity> optionalEntity = goalRepository.findById(id);
+            Optional<GoalEntity> optionalEntity = goalRepository.findById(goalId);
             if (optionalEntity.isPresent()) {
                 GoalEntity goalEntity = optionalEntity.get();
                 // Use goalEntity
                 if(goalEntity.getUserEntity().equals(userRepository.findByUserName(userName))){
                     goalEntity.setDeleted(true);
                     result.put("code", 0);
-                    result.put("message", "Delete Success");
+                    result.put("message", "Delete goal Success");
                 }else{
                     result.put("code", 2);
                     result.put("message", "You are not the author of this goal and cannot delete it");
@@ -107,22 +107,21 @@ public class GoalService {
             }
         }catch (Exception e){
             e.printStackTrace();
-            result.put("code", 3);
+            result.put("code", -1);
             result.put("message", "An error occurred while updating the goal");
         }
         return result;
     }
 
-    public HashMap<String, Object> updateGoal(Long id, String userName, GoalRequestDTO goalRequestDTO){
+    public HashMap<String, Object> updateGoal(Long goalId, String userName, GoalRequestDTO goalRequestDTO){
         HashMap<String, Object> result = new HashMap<>();
         try{
-            Optional<GoalEntity> optionalEntity = goalRepository.findById(id);
+            Optional<GoalEntity> optionalEntity = goalRepository.findById(goalId);
             if (optionalEntity.isPresent()) {
                 GoalEntity goalEntity = optionalEntity.get();
                 // Use goalEntity
                 if(goalEntity.getUserEntity().equals(userRepository.findByUserName(userName))){
                     GoalMapper.INSTANCE.updateEntityFromDto(goalRequestDTO, goalEntity);
-//                    goalEntity.setUpdateDate(new Date());
                     goalRepository.save(goalEntity);
                     result.put("code", 0);
                     result.put("message", "Update Success");

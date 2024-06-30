@@ -83,11 +83,11 @@ public class GoalController {
     @RequestMapping(method = DELETE)
     @ResponseBody
     public ResponseEntity<?> deleteGoal(
-            @RequestParam Long id
+            @RequestParam Long goalId
     ){
         try {
             String userName = SecurityUtils.getCurrentUsername();
-            Map<String, Object> result = goalService.deleteGoal(id, userName);
+            Map<String, Object> result = goalService.deleteGoal(goalId, userName);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             // 예외 처리 로직 추가
@@ -102,11 +102,11 @@ public class GoalController {
     @ResponseBody
     public ResponseEntity<?> updateGoal(
             @RequestBody GoalRequestDTO requestDTO,
-            @RequestParam Long id
+            @RequestParam Long goalId
     ){
         try {
             String userName = SecurityUtils.getCurrentUsername();
-            Map<String, Object> result = goalService.updateGoal(id, userName, requestDTO);
+            Map<String, Object> result = goalService.updateGoal(goalId, userName, requestDTO);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             // 예외 처리 로직 추가

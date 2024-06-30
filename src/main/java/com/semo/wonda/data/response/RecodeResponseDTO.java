@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class RecodeResponseDTO {
+    private Long id;
     private String recodeTitle;
     private String recodeAmount;
     private String recodeContent;

@@ -15,7 +15,6 @@ import java.util.List;
 public interface GoalMapper {
     GoalMapper INSTANCE = Mappers.getMapper(GoalMapper.class);
 
-    @Mapping(source = "id", target = "id")
     @Mapping(source = "goalTitle", target = "goalTitle")
     @Mapping(source = "goalAmount", target = "goalAmount")
     @Mapping(source = "startDate", target = "startDate")

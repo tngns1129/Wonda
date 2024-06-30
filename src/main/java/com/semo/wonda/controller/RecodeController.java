@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @Controller
 @RequestMapping(value = "/recode")
@@ -60,7 +59,47 @@ public class RecodeController {
             @RequestParam(required = true) Long goalId
             ){
         try{
-            Map<String, Object> result = recodeService.postRecode(requestDTO, goalId);
+            String userName = SecurityUtils.getCurrentUsername();
+            Map<String, Object> result = recodeService.postRecode(requestDTO, goalId, userName);
+            return ResponseEntity.ok(result);
+        }catch (Exception e) {
+            // 예외 처리 로직 추가
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("code",-1);
+            errorResult.put("message","error occurred: " + e.getMessage());
+            log.error("Controller error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
+        }
+    }
+
+    @RequestMapping(method = PUT)
+    @ResponseBody
+    public  ResponseEntity<?> updateRecode(
+            @RequestBody RecodeRequestDTO requestDTO,
+            @RequestParam Long recodeId
+    ){
+        try{
+            String userName = SecurityUtils.getCurrentUsername();
+            Map<String, Object> result = recodeService.updateRecode(requestDTO, recodeId, userName);
+            return ResponseEntity.ok(result);
+        }catch (Exception e) {
+            // 예외 처리 로직 추가
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("code",-1);
+            errorResult.put("message","error occurred: " + e.getMessage());
+            log.error("Controller error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
+        }
+    }
+
+    @RequestMapping(method = DELETE)
+    @ResponseBody
+    public  ResponseEntity<?> deleteRecode(
+            @RequestParam Long recodeId
+    ){
+        try{
+            String userName = SecurityUtils.getCurrentUsername();
+            Map<String, Object> result = recodeService.deleteRecode(recodeId, userName);
             return ResponseEntity.ok(result);
         }catch (Exception e) {
             // 예외 처리 로직 추가
