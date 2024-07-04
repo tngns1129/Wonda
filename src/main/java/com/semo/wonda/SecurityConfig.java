@@ -46,7 +46,7 @@ public class SecurityConfig {
                 )//
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
-                                .requestMatchers("/", "/sign/**").permitAll()
+                                .requestMatchers("/", "/sign/**","/sign","/static/**").permitAll()
 //                                .requestMatchers("/", "/**").permitAll()
                                 .anyRequest().authenticated()
                 )//
@@ -55,7 +55,7 @@ public class SecurityConfig {
                 ) // 401 403 관련 예외처리
                 .formLogin((formLogin) ->
                     formLogin
-                            .loginPage("/sign/in")
+                            .loginPage("/sign")
                             .usernameParameter("userName")
                             .passwordParameter("userPassword")
                             .loginProcessingUrl("/sign/in")
