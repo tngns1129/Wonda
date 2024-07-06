@@ -34,7 +34,7 @@ public class FirstFilter implements Filter {
         String uri = httpServletRequest.getRequestURI();
 //        String reqContent = new String(httpServletRequest.getContentAsByteArray());
 //        reqContent = new String(String.valueOf(httpServletRequest.getRequest()));
-        log.info("uri: {}", uri);
+        //log.info("uri: {}", uri);
         //request 내용 확인
         Enumeration<String> params = httpServletRequest.getParameterNames();
         StringBuffer buffer = new StringBuffer();
@@ -45,15 +45,37 @@ public class FirstFilter implements Filter {
         }
         if(buffer.length() > 0) {
             req = String.format("request: %s", buffer.toString().substring(1));
-            log.info(req);
+            //log.info(req);
         }
-
+        String resContent = new String(httpServletResponse.getContentAsByteArray());
+        httpServletResponse.copyBodyToResponse();
         // response 내용 상태 정보, 내용 확인
         int httpStatus = httpServletResponse.getStatus();
-        String resContent = new String(httpServletResponse.getContentAsByteArray());
-        log.info("status: {}", httpStatus);
-        log.info("response: {}", resContent);
-        httpServletResponse.copyBodyToResponse();
+        if(httpStatus == HttpServletResponse.SC_OK){
+            log.info("Status: {}", httpStatus);
+            log.info("URI: {}", httpServletRequest.getRequestURI());
+            log.info("Request Body:");
+            log.info("  {}", new String(httpServletRequest.getContentAsByteArray()));
+            log.info("Response Body:");
+            log.info("  {}", new String(httpServletResponse.getContentAsByteArray()));
+        }
+        else if (httpStatus == HttpStatus.BAD_REQUEST.value()) {
+            log.error("Bad Request occurred:");
+            log.error("Status: {}", httpStatus);
+            log.error("URI: {}", httpServletRequest.getRequestURI());
+            log.error("Request Body:");
+            log.error("  {}", new String(httpServletRequest.getContentAsByteArray()));
+            log.error("Response Body:");
+            log.error("  {}", new String(httpServletResponse.getContentAsByteArray()));
+        }else{
+            log.error("Status: {}", httpStatus);
+            log.error("URI: {}", httpServletRequest.getRequestURI());
+            log.error("Request Body:");
+            log.error("  {}", new String(httpServletRequest.getContentAsByteArray()));
+            log.error("Response Body:");
+            log.error("  {}", new String(httpServletResponse.getContentAsByteArray()));
+        }
+
 //        if (httpStatus != HttpServletResponse.SC_OK) {
 //            log.error("status: {}", httpStatus);
 //            log.error("error: {}", HttpStatus.valueOf(httpStatus).getReasonPhrase());

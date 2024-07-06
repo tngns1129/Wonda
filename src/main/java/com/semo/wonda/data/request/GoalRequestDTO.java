@@ -18,6 +18,7 @@ public class GoalRequestDTO {
     private String endDate;
     private GoalType goalType;
     private boolean completed;
+    private boolean shared;
 
     @Builder
     public GoalRequestDTO(String goalTitle, String goalAmount, String nowAmount, String startDate, String endDate, GoalType goalType, boolean completed){

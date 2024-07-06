@@ -5,18 +5,20 @@ import com.semo.wonda.data.request.GoalRequestDTO;
 import com.semo.wonda.data.response.GoalResponseDTO;
 import com.semo.wonda.entity.GoalEntity;
 import com.semo.wonda.entity.GoalType;
+import com.semo.wonda.entity.SharedGoal;
 import com.semo.wonda.entity.UserEntity;
 import com.semo.wonda.repository.GoalRepository;
+import com.semo.wonda.repository.SharedGoalRepository;
 import com.semo.wonda.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -27,6 +29,9 @@ public class GoalService {
     private final GoalRepository goalRepository;
     @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
+    private final SharedGoalRepository sharedGoalRepository;
 
     public List<GoalResponseDTO> getAllGoalByUser(String username){
         UserEntity user = userRepository.findByUserName(username);
@@ -42,22 +47,28 @@ public class GoalService {
     public Page<GoalResponseDTO> getGoalByUsernameAndGoalTypeAndCompleted(Pageable pageable, String userName, GoalType goalType, Boolean completed){
         UserEntity user = userRepository.findByUserName(userName);
         Page<GoalEntity> entityPage = Page.empty();
-        if(user != null){
+        if (user != null) {
+            // 공유된 Goal의 ID를 모아둘 Set
+            Set<Long> sharedGoalIds = new HashSet<>();
+
+            // 본인 아이디로 공유된 Goal의 ID들을 가져옴
+            Set<SharedGoal> sharedGoals = sharedGoalRepository.findByUser(user);
+            sharedGoalIds.addAll(sharedGoals.stream().map(sharedGoal -> sharedGoal.getGoal().getId()).collect(Collectors.toSet()));
+
+            // Goal을 가져올 때 본인 아이디로 공유된 Goal도 함께 불러오기 위해 추가
             if (!pageable.getSort().isSorted()) {
                 pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createDate").descending());
             }
-            if(goalType != null && completed != null){
-                entityPage = goalRepository.findAllByUserEntityAndDeletedFalseAndCompletedAndGoalType(pageable, user, completed, goalType);
-            } else if(completed != null){
-                entityPage = goalRepository.findAllByUserEntityAndDeletedFalseAndCompleted(pageable, user, completed);
-            } else if(goalType != null){
-                entityPage = goalRepository.findAllByUserEntityAndGoalTypeAndDeletedFalse(pageable, user, goalType);
-            }
-            else{
-                entityPage = goalRepository.findAllByUserEntityAndDeletedFalse(pageable, user);
-            }
 
-        }else{
+            if (goalType != null && completed != null) {
+                entityPage = goalRepository.findAllByUserEntityAndDeletedFalseAndCompletedAndGoalTypeOrIdIn(pageable, user, completed, goalType, sharedGoalIds);
+            } else if (completed != null) {
+                entityPage = goalRepository.findAllByUserEntityAndDeletedFalseAndCompletedOrIdIn(pageable, user, completed, sharedGoalIds);
+            } else if (goalType != null) {
+                entityPage = goalRepository.findAllByUserEntityAndGoalTypeAndDeletedFalseOrIdIn(pageable, user, goalType, sharedGoalIds);
+            } else {
+                entityPage = goalRepository.findAllByUserEntityAndDeletedFalseOrIdIn(pageable, user, sharedGoalIds);
+            }
         }
 
         return GoalMapper.INSTANCE.toDTOPage(entityPage);
@@ -143,6 +154,38 @@ public class GoalService {
             result.put("code", 3);
             result.put("message", "An error occurred while updating the goal");
         }
+        return result;
+    }
+
+    @Transactional
+    public HashMap<String, Object> shareGoal(Long goalId, Set<String> userNames) {
+        HashMap<String, Object> result = new HashMap<>();
+        GoalEntity goal = goalRepository.findById(goalId)
+                .orElseThrow(() -> new EntityNotFoundException("Goal not found with id: " + goalId));
+        goal.setShared(true);
+        goalRepository.save(goal);
+
+        for (String userName : userNames) {
+            UserEntity user = userRepository.findByUserName(userName);
+
+            // 이미 존재하는 공유 목표인지 검사
+            Optional<SharedGoal> existingSharedGoal = sharedGoalRepository.findByGoalAndUser(goal, user);
+            if (existingSharedGoal.isPresent()) {
+                // 이미 존재하면 추가하지 않음
+                continue;
+            }
+
+            SharedGoal sharedGoal = new SharedGoal();
+            sharedGoal.setGoal(goal);
+            sharedGoal.setUser(user);
+
+            goal.getSharedGoals().add(sharedGoal);
+            sharedGoalRepository.save(sharedGoal);
+        }
+
+        goalRepository.save(goal);
+        result.put("code", 0);
+        result.put("message", "Success Share");
         return result;
     }
 

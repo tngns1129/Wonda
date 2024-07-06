@@ -21,6 +21,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -108,6 +109,27 @@ public class GoalController {
         try {
             String userName = SecurityUtils.getCurrentUsername();
             Map<String, Object> result = goalService.updateGoal(goalId, userName, requestDTO);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            // 예외 처리 로직 추가
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("code",-1);
+            errorResult.put("message","error occurred: " + e.getMessage());
+            log.error("Controller error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
+        }
+    }
+
+    @RequestMapping(value = "/share", method = POST)
+    @ResponseBody
+    public ResponseEntity<?> shareGoals(
+            @RequestParam Long goalId,
+            @RequestBody Map<String, Set<String>> userNames
+    ){
+        try{
+            String userName = SecurityUtils.getCurrentUsername();
+            //todo: 본인이 쓴 글 공유하는지 체크
+            Map<String, Object> result = goalService.shareGoal(goalId, userNames.get("userNames"));
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             // 예외 처리 로직 추가
