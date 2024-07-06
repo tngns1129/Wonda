@@ -13,15 +13,17 @@ public class GoalRequestDTO {
 
     private String goalTitle;
     private String goalAmount;
+    private String nowAmount;
     private String startDate;
     private String endDate;
     private GoalType goalType;
     private boolean completed;
 
     @Builder
-    public GoalRequestDTO(String goalTitle, String goalAmount, String startDate, String endDate, GoalType goalType, boolean completed){
+    public GoalRequestDTO(String goalTitle, String goalAmount, String nowAmount, String startDate, String endDate, GoalType goalType, boolean completed){
         this.goalTitle = goalTitle;
         this.goalAmount = goalAmount;
+        this.nowAmount = nowAmount;
         this.startDate = startDate;
         this.endDate = endDate;
         this.goalType = goalType;

@@ -20,6 +20,10 @@ public class GoalEntity extends BasicEntity {
     @Column(name = "goal_amount")
     private String goalAmount;
 
+    //현재금액
+    @Column(name = "now_amount")
+    private String nowAmount;
+
     //시작일
     @Column(name = "start_date")
     private String startDate;

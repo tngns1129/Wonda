@@ -12,6 +12,7 @@ public class GoalResponseDTO {
     private Long id;
     private String goalTitle;
     private String goalAmount;
+    private String nowAmout;
     private String startDate;
     private String endDate;
     private GoalType goalType;

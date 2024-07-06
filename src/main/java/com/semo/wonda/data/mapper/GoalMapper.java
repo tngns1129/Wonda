@@ -21,6 +21,7 @@ public interface GoalMapper {
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "goalType", target = "goalType")
     @Mapping(source = "completed", target = "completed")
+
     GoalResponseDTO toDTO(GoalEntity entity);
 
     List<GoalResponseDTO> toDTOList(List<GoalEntity> entities);
