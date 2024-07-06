@@ -15,13 +15,14 @@ public class GoalResponseDTO {
     private String startDate;
     private String endDate;
     private GoalType goalType;
+    private boolean completed;
 
-    public GoalResponseDTO(Long id, String goalTitle, String goalAmount, String startDate, String endDate, GoalType goalType){
-        this.id = id;
-        this.goalTitle = goalTitle;
-        this.goalAmount = goalAmount;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.goalType = goalType;
-    }
+//    public GoalResponseDTO(Long id, String goalTitle, String goalAmount, String startDate, String endDate, GoalType goalType){
+//        this.id = id;
+//        this.goalTitle = goalTitle;
+//        this.goalAmount = goalAmount;
+//        this.startDate = startDate;
+//        this.endDate = endDate;
+//        this.goalType = goalType;
+//    }
 }

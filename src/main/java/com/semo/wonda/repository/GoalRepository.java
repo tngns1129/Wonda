@@ -18,4 +18,9 @@ public interface GoalRepository extends JpaRepository<GoalEntity, Long> {
     List<GoalEntity> findAllByUserEntity(UserEntity user);
 
     Page<GoalEntity> findAllByUserEntityAndGoalTypeAndDeletedFalse(Pageable pageable, UserEntity user, GoalType goalType);
+
+    Page<GoalEntity> findAllByUserEntityAndDeletedFalseAndCompleted(Pageable pageable, UserEntity user, boolean completed);
+    Page<GoalEntity> findAllByUserEntityAndDeletedFalseAndCompletedAndGoalType(Pageable pageable, UserEntity user, boolean completed, GoalType goalType);
+
+    Page<GoalEntity> findAllByUserEntityAndGoalTypeAndDeletedFalseAndCompletedFalse(Pageable pageable, UserEntity user, GoalType goalType);
 }

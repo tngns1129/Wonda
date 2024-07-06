@@ -39,21 +39,25 @@ public class GoalService {
         return GoalMapper.INSTANCE.toDTOPage(entityPage);
     }
 
-    public Page<GoalResponseDTO> getGoalByUsernameAndGoalType(Pageable pageable, String userName, GoalType goalType){
+    public Page<GoalResponseDTO> getGoalByUsernameAndGoalTypeAndCompleted(Pageable pageable, String userName, GoalType goalType, Boolean completed){
         UserEntity user = userRepository.findByUserName(userName);
         Page<GoalEntity> entityPage = Page.empty();
         if(user != null){
             if (!pageable.getSort().isSorted()) {
-                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("updateDate").descending());
+                pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createDate").descending());
             }
-
-            if(goalType == null){
-                entityPage = goalRepository.findAllByUserEntityAndDeletedFalse(pageable, user);
-            }else{
+            if(goalType != null && completed != null){
+                entityPage = goalRepository.findAllByUserEntityAndDeletedFalseAndCompletedAndGoalType(pageable, user, completed, goalType);
+            } else if(completed != null){
+                entityPage = goalRepository.findAllByUserEntityAndDeletedFalseAndCompleted(pageable, user, completed);
+            } else if(goalType != null){
                 entityPage = goalRepository.findAllByUserEntityAndGoalTypeAndDeletedFalse(pageable, user, goalType);
             }
+            else{
+                entityPage = goalRepository.findAllByUserEntityAndDeletedFalse(pageable, user);
+            }
 
-        }else {
+        }else{
         }
 
         return GoalMapper.INSTANCE.toDTOPage(entityPage);
@@ -63,7 +67,7 @@ public class GoalService {
         HashMap<String, Object> result = new HashMap<>();
         try{
             GoalEntity entity = GoalMapper.INSTANCE.toEntity(requestDTO);
-            if(userName.equals("anonymousUser")){
+            if(userName == null){
                 //todo: 비로그인 사용자
             }
             UserEntity user = userRepository.findByUserName(userName);

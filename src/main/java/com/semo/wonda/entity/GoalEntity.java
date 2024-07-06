@@ -33,19 +33,23 @@ public class GoalEntity extends BasicEntity {
     @Column(name = "goal_type")
     private GoalType goalType;
 
+    //완료 여부
+    @Column(name = "completed")
+    private boolean completed = false;
+
     //목표작성자
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
-    @Builder
-    public GoalEntity(String goalTitle, String goalAmount, String startDate, String endDate, GoalType goalType, UserEntity userEntity){
-        this.goalTitle = goalTitle;
-        this.goalAmount = goalAmount;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.goalType = goalType;
-        this.userEntity = userEntity;
-    }
+//    @Builder
+//    public GoalEntity(String goalTitle, String goalAmount, String startDate, String endDate, GoalType goalType, UserEntity userEntity){
+//        this.goalTitle = goalTitle;
+//        this.goalAmount = goalAmount;
+//        this.startDate = startDate;
+//        this.endDate = endDate;
+//        this.goalType = goalType;
+//        this.userEntity = userEntity;
+//    }
 
 }

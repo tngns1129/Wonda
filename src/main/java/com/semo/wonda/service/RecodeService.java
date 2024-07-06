@@ -39,7 +39,7 @@ public class RecodeService {
     public Page<RecodeResponseDTO> getRecodes(Pageable pageable, Long goalId){
         Optional<GoalEntity> optionalEntity = goalRepository.findById(goalId);
         if (!pageable.getSort().isSorted()) {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("updateDate").descending());
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createDate").descending());
         }
         if (optionalEntity.isPresent()) {
             GoalEntity goalEntity = optionalEntity.get();

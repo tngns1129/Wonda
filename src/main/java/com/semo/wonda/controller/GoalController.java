@@ -44,13 +44,14 @@ public class GoalController {
     @ResponseBody
     public ResponseEntity<?> getGoals(
             Pageable pageable,
-            @RequestParam(required = false) GoalType goalType
+            @RequestParam(required = false) GoalType goalType,
+            @RequestParam(required = false) Boolean completed
     ){
         try{
             Map<String, Object> result = new HashMap<>();
             result.put("code", 0);
             result.put("message", "success search");
-            result.put("data", goalService.getGoalByUsernameAndGoalType(pageable, SecurityUtils.getCurrentUsername(), goalType));
+            result.put("data", goalService.getGoalByUsernameAndGoalTypeAndCompleted(pageable, SecurityUtils.getCurrentUsername(), goalType, completed));
             return ResponseEntity.ok(result);
         }catch (Exception e) {
             // 예외 처리 로직 추가
