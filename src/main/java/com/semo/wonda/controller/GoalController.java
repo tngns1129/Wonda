@@ -124,12 +124,45 @@ public class GoalController {
     @ResponseBody
     public ResponseEntity<?> shareGoals(
             @RequestParam Long goalId,
-            @RequestBody Map<String, Set<String>> userNames
+            @RequestBody Map<String, Set<String>> sharedWithUsers
     ){
         try{
             String userName = SecurityUtils.getCurrentUsername();
-            //todo: 본인이 쓴 글 공유하는지 체크
-            Map<String, Object> result = goalService.shareGoal(goalId, userNames.get("userNames"));
+            //본인글인지 확인
+            if (!goalService.isOwner(goalId, userName)) {
+                Map<String, Object> errorResult = new HashMap<>();
+                errorResult.put("code", 1);
+                errorResult.put("message", "You do not have permission to unshare this goal.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResult);
+            }
+            Map<String, Object> result = goalService.shareGoal(goalId, sharedWithUsers.get("sharedWithUsers"));
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            // 예외 처리 로직 추가
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("code",-1);
+            errorResult.put("message","error occurred: " + e.getMessage());
+            log.error("Controller error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
+        }
+    }
+
+    @RequestMapping(value = "/share", method = DELETE)
+    @ResponseBody
+    public ResponseEntity<?> unshareGoals(
+            @RequestParam Long goalId,
+            @RequestBody Map<String, Set<String>> sharedWithUsers
+    ){
+        try{
+            String userName = SecurityUtils.getCurrentUsername();
+            //본인글인지 확인
+            if (!goalService.isOwner(goalId, userName)) {
+                Map<String, Object> errorResult = new HashMap<>();
+                errorResult.put("code", 1);
+                errorResult.put("message", "You do not have permission to unshare this goal.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResult);
+            }
+            Map<String, Object> result = goalService.unshareGoal(goalId, sharedWithUsers.get("unsharedWithUsers"));
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             // 예외 처리 로직 추가

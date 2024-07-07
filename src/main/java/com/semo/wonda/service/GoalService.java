@@ -163,7 +163,6 @@ public class GoalService {
         GoalEntity goal = goalRepository.findById(goalId)
                 .orElseThrow(() -> new EntityNotFoundException("Goal not found with id: " + goalId));
         goal.setShared(true);
-        goalRepository.save(goal);
 
         for (String userName : userNames) {
             UserEntity user = userRepository.findByUserName(userName);
@@ -180,13 +179,48 @@ public class GoalService {
             sharedGoal.setUser(user);
 
             goal.getSharedGoals().add(sharedGoal);
+
             sharedGoalRepository.save(sharedGoal);
         }
-
+        Set<SharedGoal> remainingUsers = goal.getSharedGoals();
+        if(!remainingUsers.isEmpty()){
+            goal.setShared(true);
+        }
         goalRepository.save(goal);
         result.put("code", 0);
         result.put("message", "Success Share");
         return result;
+    }
+
+    public Map<String, Object> unshareGoal(Long goalId, Set<String> userNames) {
+        GoalEntity goal = goalRepository.findById(goalId)
+                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
+
+        Set<UserEntity> usersToUnshare = userRepository.findByUserNameIn(userNames);
+        if (usersToUnshare.isEmpty()) {
+            throw new EntityNotFoundException("Users not found");
+        }
+        Set<SharedGoal> sharedGoalsToRemove = goal.getSharedGoals().stream()
+                .filter(sharedGoal -> usersToUnshare.contains(sharedGoal.getUser()))
+                .collect(Collectors.toSet());
+
+        goal.getSharedGoals().removeAll(sharedGoalsToRemove);
+        Set<SharedGoal> remainingUsers = goal.getSharedGoals();
+        if(remainingUsers.isEmpty()){
+            goal.setShared(false);
+        }
+        goalRepository.save(goal);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", true);
+        result.put("code", 0);
+        return result;
+    }
+
+    public boolean isOwner(Long goalId, String username) {
+        GoalEntity goal = goalRepository.findById(goalId)
+                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
+        return goal.getUserEntity().getUserName().equals(username);
     }
 
 }

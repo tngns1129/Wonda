@@ -6,6 +6,7 @@ import com.semo.wonda.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import org.springframework.security.core.userdetails.User;
 
 @Mapper
 public interface UserMapper {
@@ -14,4 +15,5 @@ public interface UserMapper {
     UserResponseDTO toDTO(UserEntity entity);
 
     UserEntity toEntity(UserRequestDTO dto);
+    UserRequestDTO toRequestDTO(UserEntity user);
 }

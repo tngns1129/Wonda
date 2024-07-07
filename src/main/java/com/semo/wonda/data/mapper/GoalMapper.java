@@ -1,6 +1,7 @@
 package com.semo.wonda.data.mapper;
 
 import com.semo.wonda.data.request.GoalRequestDTO;
+import com.semo.wonda.data.request.UserRequestDTO;
 import com.semo.wonda.data.response.GoalResponseDTO;
 import com.semo.wonda.data.response.UserResponseDTO;
 import com.semo.wonda.entity.GoalEntity;
@@ -45,6 +46,12 @@ public interface GoalMapper {
     default Set<UserResponseDTO> mapSharedGoalsToUserResponseDTOs(Set<SharedGoal> sharedGoals) {
         return sharedGoals.stream()
                 .map(sharedGoal -> UserMapper.INSTANCE.toDTO(sharedGoal.getUser()))
+                .collect(Collectors.toSet());
+    }
+
+    default Set<UserRequestDTO> mapSharedGoalsToUserRequestDTOs(Set<SharedGoal> sharedGoals) {
+        return sharedGoals.stream()
+                .map(sharedGoal -> UserMapper.INSTANCE.toRequestDTO(sharedGoal.getUser()))
                 .collect(Collectors.toSet());
     }
 }
