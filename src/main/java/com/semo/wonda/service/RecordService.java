@@ -1,14 +1,12 @@
 package com.semo.wonda.service;
 
-import com.semo.wonda.data.mapper.GoalMapper;
-import com.semo.wonda.data.mapper.RecodeMapper;
-import com.semo.wonda.data.request.RecodeRequestDTO;
-import com.semo.wonda.data.response.RecodeResponseDTO;
+import com.semo.wonda.data.mapper.RecordMapper;
+import com.semo.wonda.data.request.RecordRequestDTO;
+import com.semo.wonda.data.response.RecordResponseDTO;
 import com.semo.wonda.entity.GoalEntity;
-import com.semo.wonda.entity.RecodeEntity;
-import com.semo.wonda.entity.UserEntity;
+import com.semo.wonda.entity.RecordEntity;
 import com.semo.wonda.repository.GoalRepository;
-import com.semo.wonda.repository.RecodeRepository;
+import com.semo.wonda.repository.RecordRepository;
 import com.semo.wonda.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,24 +25,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class RecodeService {
+public class RecordService {
 
     @Autowired
-    private final RecodeRepository recodeRepository;
+    private final RecordRepository recordRepository;
     @Autowired
     private final GoalRepository goalRepository;
     @Autowired
     private final UserRepository userRepository;
 
-    public Page<RecodeResponseDTO> getRecodes(Pageable pageable, Long goalId){
+    public Page<RecordResponseDTO> getRecords(Pageable pageable, Long goalId){
         Optional<GoalEntity> optionalEntity = goalRepository.findById(goalId);
         if (!pageable.getSort().isSorted()) {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("createDate").descending());
         }
         if (optionalEntity.isPresent()) {
             GoalEntity goalEntity = optionalEntity.get();
-            Page<RecodeEntity> entityPage = recodeRepository.findAllByGoalEntityAndDeletedFalse(pageable, goalEntity);
-            return RecodeMapper.INSTANCE.toDTOPage(entityPage);
+            Page<RecordEntity> entityPage = recordRepository.findAllByGoalEntityAndDeletedFalse(pageable, goalEntity);
+            return RecordMapper.INSTANCE.toDTOPage(entityPage);
         } else {
             // 엔티티가 존재하지 않을 경우 처리
             return null;
@@ -53,21 +51,21 @@ public class RecodeService {
 
     }
 
-    public Map<String, Object> postRecode(RecodeRequestDTO requestDTO, Long goalId, String userName) {
+    public Map<String, Object> postRecord(RecordRequestDTO requestDTO, Long goalId, String userName) {
         Map<String, Object> result = new HashMap<>();
         try{
-            RecodeEntity entity = RecodeMapper.INSTANCE.toEntity(requestDTO);
+            RecordEntity entity = RecordMapper.INSTANCE.toEntity(requestDTO);
             Optional<GoalEntity> optionalGoalEntity = goalRepository.findById(goalId);
             if(optionalGoalEntity.isPresent()){
                 GoalEntity goalEntity = optionalGoalEntity.get();
                 if(goalEntity.getUserEntity().equals(userRepository.findByUserName(userName))){
                     entity.setGoalEntity(goalEntity);
-                    recodeRepository.save(entity);
+                    recordRepository.save(entity);
                     result.put("code", 0);
-                    result.put("message", "Post recode success");
+                    result.put("message", "Post record success");
                 }else{
                     result.put("code", 2);
-                    result.put("message", "You are not the author of this goal and cannot post recode");
+                    result.put("message", "You are not the author of this goal and cannot post record");
                 }
 
             }else {
@@ -82,25 +80,25 @@ public class RecodeService {
         return result;
     }
 
-    public Map<String, Object> deleteRecode(Long recodeId, String userName) {
+    public Map<String, Object> deleteRecord(Long recordId, String userName) {
         Map<String, Object> result = new HashMap<>();
         try{
-            Optional<RecodeEntity> optionalRecodeEntity = recodeRepository.findById(recodeId);
-            if(optionalRecodeEntity.isPresent()){
-                RecodeEntity recodeEntity = optionalRecodeEntity.get();
-                if(recodeEntity.getGoalEntity().getUserEntity().equals(userRepository.findByUserName(userName))) {
-                    recodeEntity.setDeleted(true);
+            Optional<RecordEntity> optionalRecordEntity = recordRepository.findById(recordId);
+            if(optionalRecordEntity.isPresent()){
+                RecordEntity recordEntity = optionalRecordEntity.get();
+                if(recordEntity.getGoalEntity().getUserEntity().equals(userRepository.findByUserName(userName))) {
+                    recordEntity.setDeleted(true);
                     result.put("code", 0);
-                    result.put("message", "Delete recode success");
+                    result.put("message", "Delete record success");
                 } else{
                     result.put("code", 2);
-                    result.put("message", "You are not the author of this goal,recode and cannot delete it");
+                    result.put("message", "You are not the author of this goal,record and cannot delete it");
                 }
 
             }else {
                 // 엔티티가 존재하지 않을 경우 처리
                 result.put("code", 1);
-                result.put("message", "recode is null");
+                result.put("message", "record is null");
                 return result;
             }
         }catch (Exception e){
@@ -109,25 +107,25 @@ public class RecodeService {
         return result;
     }
 
-    public Map<String, Object> updateRecode(RecodeRequestDTO requestDTO, Long recodeId, String userName) {
+    public Map<String, Object> updateRecord(RecordRequestDTO requestDTO, Long recordId, String userName) {
         Map<String, Object> result = new HashMap<>();
         try{
-            Optional<RecodeEntity> optionalRecodeEntity = recodeRepository.findById(recodeId);
-            if(optionalRecodeEntity.isPresent()){
-                RecodeEntity recodeEntity = optionalRecodeEntity.get();
-                if(recodeEntity.getGoalEntity().getUserEntity().equals(userRepository.findByUserName(userName))){
-                    RecodeMapper.INSTANCE.updateEntityFromDto(requestDTO, recodeEntity);
-                    recodeRepository.save(recodeEntity);
+            Optional<RecordEntity> optionalRecordEntity = recordRepository.findById(recordId);
+            if(optionalRecordEntity.isPresent()){
+                RecordEntity recordEntity = optionalRecordEntity.get();
+                if(recordEntity.getGoalEntity().getUserEntity().equals(userRepository.findByUserName(userName))){
+                    RecordMapper.INSTANCE.updateEntityFromDto(requestDTO, recordEntity);
+                    recordRepository.save(recordEntity);
                     result.put("code", 0);
-                    result.put("message", "Update recode success");
+                    result.put("message", "Update record success");
                 }else{
                     result.put("code", 2);
-                    result.put("message", "You are not the author of this recode and cannot update it");
+                    result.put("message", "You are not the author of this record and cannot update it");
                 }
             }else {
                 // 엔티티가 존재하지 않을 경우 처리
                 result.put("code", 1);
-                result.put("message", "recode is null");
+                result.put("message", "record is null");
                 return result;
             }
         }catch (Exception e){

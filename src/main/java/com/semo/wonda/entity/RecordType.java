@@ -1,5 +1,5 @@
 package com.semo.wonda.entity;
 
-public enum RecodeType {
+public enum RecordType {
     INCOME, EXPENSES
 }

@@ -1,9 +1,8 @@
 package com.semo.wonda.controller;
 
 import com.semo.wonda.SecurityUtils;
-import com.semo.wonda.data.request.RecodeRequestDTO;
-import com.semo.wonda.entity.GoalType;
-import com.semo.wonda.service.RecodeService;
+import com.semo.wonda.data.request.RecordRequestDTO;
+import com.semo.wonda.service.RecordService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +22,16 @@ import java.util.Map;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @Controller
-@RequestMapping(value = "/recode")
+@RequestMapping(value = "/record")
 @RequiredArgsConstructor
-public class RecodeController {
-    private static final Logger log = LoggerFactory.getLogger(RecodeController.class);
+public class RecordController {
+    private static final Logger log = LoggerFactory.getLogger(RecordController.class);
 
     @Autowired
-    RecodeService recodeService;
+    RecordService recordService;
     @RequestMapping(method = GET)
     @ResponseBody
-    public ResponseEntity<?> getRecode(
+    public ResponseEntity<?> getRecord(
             Pageable pageable,
             @RequestParam(required = true) Long goalId
     ){
@@ -40,7 +39,7 @@ public class RecodeController {
             Map<String, Object> result = new HashMap<>();
             result.put("code", 0);
             result.put("message", "success search");
-            result.put("data", recodeService.getRecodes(pageable, goalId));
+            result.put("data", recordService.getRecords(pageable, goalId));
             return ResponseEntity.ok(result);
         }catch (Exception e) {
             // 예외 처리 로직 추가
@@ -54,13 +53,13 @@ public class RecodeController {
 
     @RequestMapping(method = POST)
     @ResponseBody
-    public  ResponseEntity<?> postRecode(
-            @RequestBody RecodeRequestDTO requestDTO,
+    public  ResponseEntity<?> postRecord(
+            @RequestBody RecordRequestDTO requestDTO,
             @RequestParam(required = true) Long goalId
             ){
         try{
             String userName = SecurityUtils.getCurrentUsername();
-            Map<String, Object> result = recodeService.postRecode(requestDTO, goalId, userName);
+            Map<String, Object> result = recordService.postRecord(requestDTO, goalId, userName);
             return ResponseEntity.ok(result);
         }catch (Exception e) {
             // 예외 처리 로직 추가
@@ -74,13 +73,13 @@ public class RecodeController {
 
     @RequestMapping(method = PUT)
     @ResponseBody
-    public  ResponseEntity<?> updateRecode(
-            @RequestBody RecodeRequestDTO requestDTO,
-            @RequestParam Long recodeId
+    public  ResponseEntity<?> updateRecord(
+            @RequestBody RecordRequestDTO requestDTO,
+            @RequestParam Long recordId
     ){
         try{
             String userName = SecurityUtils.getCurrentUsername();
-            Map<String, Object> result = recodeService.updateRecode(requestDTO, recodeId, userName);
+            Map<String, Object> result = recordService.updateRecord(requestDTO, recordId, userName);
             return ResponseEntity.ok(result);
         }catch (Exception e) {
             // 예외 처리 로직 추가
@@ -94,12 +93,12 @@ public class RecodeController {
 
     @RequestMapping(method = DELETE)
     @ResponseBody
-    public  ResponseEntity<?> deleteRecode(
-            @RequestParam Long recodeId
+    public  ResponseEntity<?> deleteRecord(
+            @RequestParam Long recordId
     ){
         try{
             String userName = SecurityUtils.getCurrentUsername();
-            Map<String, Object> result = recodeService.deleteRecode(recodeId, userName);
+            Map<String, Object> result = recordService.deleteRecord(recordId, userName);
             return ResponseEntity.ok(result);
         }catch (Exception e) {
             // 예외 처리 로직 추가

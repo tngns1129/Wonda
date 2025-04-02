@@ -55,11 +55,11 @@ public class SecurityConfig {
                 ) // 401 403 관련 예외처리
                 .formLogin((formLogin) ->
                     formLogin
-                            .loginPage("/sign")
+                            .loginPage("/sign/in")
                             .usernameParameter("userName")
                             .passwordParameter("userPassword")
                             .loginProcessingUrl("/sign/in")
-                            .defaultSuccessUrl("/goal", true)
+                            .defaultSuccessUrl("/")
                     )
                 .logout((logoutConfig) ->
                         logoutConfig

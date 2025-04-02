@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.semo'
-version = '0.0.7'
+version = '0.0.10'
 
 java {
 	sourceCompatibility = '17'
@@ -31,6 +31,8 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+	implementation 'com.fasterxml:classmate:1.5.1'
+	implementation 'net.bytebuddy:byte-buddy:1.14.8'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 }
 
