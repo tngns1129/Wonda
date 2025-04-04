@@ -19,6 +19,7 @@ public interface RecordMapper {
     @Mapping(source = "recordAmount", target = "recordAmount")
     @Mapping(source = "recordContent", target = "recordContent")
     @Mapping(source = "recordType", target = "recordType")
+    @Mapping(source = "recordDate", target = "recordDate")
     @Mapping(source = "createDate", target = "createDate")
     @Mapping(source = "updateDate", target = "updateDate")
     RecordResponseDTO toDTO(RecordEntity entity);

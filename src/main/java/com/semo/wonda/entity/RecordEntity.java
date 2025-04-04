@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,12 +36,16 @@ public class RecordEntity extends BasicEntity{
     @JoinColumn(name = "goal_id", nullable = false)
     private GoalEntity goalEntity;
 
+    @Column(name = "record_date")
+    private Date recordDate;
+
     @Builder
-    public RecordEntity(String recordTitle, String recordAmount, String recordContent, RecordType recordType, GoalEntity goalEntity){
+    public RecordEntity(String recordTitle, String recordAmount, String recordContent, RecordType recordType, GoalEntity goalEntity, Date recordDate){
         this.recordTitle = recordTitle;
         this.recordAmount = recordAmount;
         this.recordContent = recordContent;
         this.recordType = recordType;
         this.goalEntity = goalEntity;
+        this.recordDate = recordDate;
     }
 }
