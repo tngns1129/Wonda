@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.semo'
-version = '0.0.11'
+version = '0.0.12'
 
 java {
 	sourceCompatibility = '17'

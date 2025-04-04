@@ -59,7 +59,7 @@ public class SecurityConfig {
                             .usernameParameter("userName")
                             .passwordParameter("userPassword")
                             .loginProcessingUrl("/sign/in")
-                            .defaultSuccessUrl("/")
+//                            .defaultSuccessUrl("/")
                     )
                 .logout((logoutConfig) ->
                         logoutConfig

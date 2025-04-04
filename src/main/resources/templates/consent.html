@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>개인정보 동의서 관리</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    form { margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+  </style>
+</head>
+<body>
+<h2>개인정보 동의서 작성</h2>
+<form id="consentForm">
+  <label for="consentText">동의서 내용:</label><br>
+  <textarea id="consentText" rows="4" cols="50" required></textarea><br>
+  <button type="submit">저장</button>
+</form>
+
+<h2>이전 동의서 이력</h2>
+<table>
+  <thead>
+  <tr>
+    <th>번호</th>
+    <th>동의서 내용</th>
+    <th>작성 날짜</th>
+  </tr>
+  </thead>
+  <tbody id="historyTableBody">
+  <!-- 동의서 이력 데이터가 여기에 추가됨 -->
+  </tbody>
+</table>
+
+<script>
+  document.getElementById('consentForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const consentText = document.getElementById('consentText').value;
+    if (!consentText) return;
+
+    await fetch('/consents', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(consentText)
+    });
+
+    loadConsentHistory();
+    document.getElementById('consentText').value = '';
+  });
+
+  async function loadConsentHistory() {
+    const response = await fetch('/consents/all');
+    const data = await response.json();
+    const tableBody = document.getElementById('historyTableBody');
+    tableBody.innerHTML = '';
+
+    data.reverse().forEach((consent, index) => {
+      const row = `<tr>
+                <td>${index + 1}</td>
+                <td>${consent.content}</td>
+                <td>${new Date(consent.createdAt).toLocaleString()}</td>
+            </tr>`;
+      tableBody.innerHTML += row;
+    });
+  }
+
+  window.onload = loadConsentHistory;
+</script>
+</body>
+</html>
